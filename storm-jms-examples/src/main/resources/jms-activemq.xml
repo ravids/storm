@@ -15,34 +15,75 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
+<!--  
 <beans 
   xmlns="http://www.springframework.org/schema/beans" 
   xmlns:amq="http://activemq.apache.org/schema/core"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
   http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.8.0.xsd">
+ --> 
+  <beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xmlns:jms="http://www.springframework.org/schema/jms"
+ xmlns:p="http://www.springframework.org/schema/p"
+ xmlns:c="http://www.springframework.org/schema/c"
+ xmlns:amq="http://activemq.apache.org/schema/core"
+ xsi:schemaLocation="http://activemq.apache.org/schema/core
+        http://activemq.apache.org/schema/core/activemq-core.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/jms 
+        http://www.springframework.org/schema/jms/spring-jms.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<!-- ActiveMQ -->
 
-	<!-- embedded ActiveMQ Broker -->
-	<!-- <amq:broker useJmx="false" persistent="false">
-		<amq:transportConnectors>
-			<amq:transportConnector uri="tcp://localhost:61616" />
-		</amq:transportConnectors>
-	</amq:broker> -->
-
+ <context:component-scan base-package="org.apache.storm.jms.example" />
+<!--
 	<amq:queue id="notificationQueue" physicalName="backtype.storm.contrib.example.queue" />
 	
 	<amq:topic id="notificationTopic" physicalName="backtype.storm.contrib.example.topic" />
 
 	<amq:connectionFactory id="jmsConnectionFactory"
 		brokerURL="tcp://localhost:61616" />
+-->
 
-	<!-- <bean id="queueTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory">
-			<ref bean="jmsConnectionFactory" />
-		</property>
-		<property name="pubSubDomain" value="false" />
-	</bean> -->
+ <!-- =============================================== -->
+  <!-- JMS Common, Define JMS connectionFactory       -->
+  <!-- =============================================== -->
+  <!-- Activemq connection factory -->
+  <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <!-- brokerURL, You may have different IP or port -->
+    <constructor-arg index="0" value="tcp://localhost:61616" />
+  </bean>
+ 
+  <!-- Pooled Spring connection factory 
+  <bean id="jmsConnectionFactory"
+    class="org.springframework.jms.connection.CachingConnectionFactory">
+    <constructor-arg ref="amqConnectionFactory" />
+  </bean>
+ -->
+  <!-- ======================================================= -->
+  <!-- JMS Send, define default destination and JmsTemplate    -->
+  <!-- ======================================================= -->
+  <!-- Default Destination Queue Definition -->
+  <bean id="notificationQueue" class="org.apache.activemq.command.ActiveMQQueue">
+    <!-- name of the queue -->
+    <constructor-arg index="0" value="backtype.storm.contrib.example.queue" />
+  </bean>
+  
+    <bean id="notificationTopic" class="org.apache.activemq.command.ActiveMQTopic">
+    <!-- name of the queue -->
+    <constructor-arg index="0" value="backtype.storm.contrib.example.topic" />
+  </bean>
+ 
+ 
+  <!-- JmsTemplate Definition -->
+  <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <property name="connectionFactory" ref="jmsConnectionFactory" />
+    <property name="defaultDestination" ref="notificationQueue" />
+  </bean>
 	
 </beans>
