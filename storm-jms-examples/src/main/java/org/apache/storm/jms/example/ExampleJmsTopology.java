@@ -85,32 +85,32 @@ public class ExampleJmsTopology {
                 INTERMEDIATE_BOLT);
 
         // bolt that subscribes to the intermediate bolt, and publishes to a JMS Topic
-        JmsBolt jmsBolt = new JmsBolt();
-        jmsBolt.setJmsProvider(jmsTopicProvider);
-
-        // anonymous message producer just calls toString() on the tuple to create a jms message
-        jmsBolt.setJmsMessageProducer(new JmsMessageProducer() {
-            @Override
-            public Message toMessage(Session session, ITuple input) throws JMSException {
-                System.out.println("Sending JMS Message:" + input.toString());
-                TextMessage tm = session.createTextMessage(input.toString());
-                return tm;
-            }
-        });
-
-        builder.setBolt(JMS_TOPIC_BOLT, jmsBolt).shuffleGrouping(INTERMEDIATE_BOLT);
+//        JmsBolt jmsBolt = new JmsBolt();
+//        jmsBolt.setJmsProvider(jmsTopicProvider);
+//
+//        // anonymous message producer just calls toString() on the tuple to create a jms message
+//        jmsBolt.setJmsMessageProducer(new JmsMessageProducer() {
+//            @Override
+//            public Message toMessage(Session session, ITuple input) throws JMSException {
+//                System.out.println("Sending JMS Message:" + input.toString());
+//                TextMessage tm = session.createTextMessage(input.toString());
+//                return tm;
+//            }
+//        });
+//
+//        builder.setBolt(JMS_TOPIC_BOLT, jmsBolt).shuffleGrouping(INTERMEDIATE_BOLT);
 
         // JMS Topic spout
-        JmsMqSpout topicSpout = new JmsMqSpout();
-        topicSpout.setJmsProvider(jmsTopicProvider);
-        topicSpout.setJmsTupleProducer(producer);
-        topicSpout.setJmsAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
-        topicSpout.setDistributed(false);
-
-        builder.setSpout(JMS_TOPIC_SPOUT, topicSpout);
-
-        builder.setBolt(ANOTHER_BOLT, new GenericBolt("ANOTHER_BOLT", true, true), 1).shuffleGrouping(
-                JMS_TOPIC_SPOUT);
+//        JmsMqSpout topicSpout = new JmsMqSpout();
+//        topicSpout.setJmsProvider(jmsTopicProvider);
+//        topicSpout.setJmsTupleProducer(producer);
+//        topicSpout.setJmsAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
+//        topicSpout.setDistributed(false);
+//
+//        builder.setSpout(JMS_TOPIC_SPOUT, topicSpout);
+//
+//        builder.setBolt(ANOTHER_BOLT, new GenericBolt("ANOTHER_BOLT", true, true), 1).shuffleGrouping(
+//                JMS_TOPIC_SPOUT);
 
         Config conf = new Config();
 

@@ -71,7 +71,7 @@
   <!-- Default Destination Queue Definition -->
   <bean id="notificationQueue" class="org.apache.activemq.command.ActiveMQQueue">
     <!-- name of the queue -->
-    <constructor-arg index="0" value="GroupingTest" />
+    <constructor-arg index="0" value="backtype.storm.contrib.example.queue" />
   </bean>
   
     <bean id="notificationTopic" class="org.apache.activemq.command.ActiveMQTopic">
